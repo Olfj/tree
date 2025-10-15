@@ -1,0 +1,29 @@
+cmake_minimum_required(VERSION 3.15)
+project(tree_plus LANGUAGES CXX)
+
+# Use MINGW if available
+if(MINGW)
+    message(STATUS "Building with mingw-w64")
+else()
+    message(STATUS "Not building with mingw-w64")
+endif()
+
+# Specify C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Include headers
+include_directories(${CMAKE_SOURCE_DIR}/include)
+
+# Collect all source files
+file(GLOB SOURCES
+    ${CMAKE_SOURCE_DIR}/src/*.cpp
+)
+
+# Create the executable
+add_executable(${PROJECT_NAME} ${SOURCES})
+
+# Optionally set output directory for binary
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)
