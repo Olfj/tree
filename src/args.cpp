@@ -62,7 +62,7 @@ Args parse_args(int argc, char* argv[]) {
 
     string token = argv[1];
 
-    if (token == "--help" or token == "-h" or token == "-?") {
+    if (token == "--help" || token == "-h" || token == "-?") {
             help();
             args.terminate = true;
             return args;
@@ -72,23 +72,23 @@ Args parse_args(int argc, char* argv[]) {
         
         token = argv[i];
 
-        if (token == "-include_files" or token == "-F") 
+        if (token == "-include_files" || token == "-F") 
             args.includeFiles = true;
          
-        else if ((token == "-path" or token == "-P") && i + 1 < argc) 
+        else if ((token == "-path" || token == "-P") && i + 1 < argc && argv[i + 1][0] != '-') 
             args.path = argv[++i]; 
         
-        else if ((token == "-target" or token == "-T") && i + 1 < argc) 
+        else if ((token == "-target" || token == "-T") && i + 1 < argc && argv[i + 1][0] != '-') 
             args.target = argv[++i];
 
-        else if (token == "-exclude" or token == "-EX") {
+        else if (token == "-exclude" || token == "-EX") {
           
             while (i + 1 < argc && argv[i + 1][0] != '-') {
                 args.exclude.emplace_back(argv[++i]);
             }
         } 
         
-        else if (token == "-exclude_sub" or token == "-EX_S") {
+        else if (token == "-exclude_sub" || token == "-EX_S") {
           
             while (i + 1 < argc && argv[i + 1][0] != '-') {
                 args.excludeSub.emplace_back(argv[++i]);
