@@ -19,7 +19,7 @@ namespace {
         bool contains_path = (find(paths.begin(), paths.end(), path) != paths.end());
         bool contains_ending = (find(paths.begin(), paths.end(), path.extension()) != paths.end());
 
-        return contains_name or contains_path or contains_ending;
+        return contains_name || contains_path || contains_ending;
     }
 
     vector<fs::directory_entry> validEntries(
