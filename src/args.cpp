@@ -72,20 +72,23 @@ Args parse_args(int argc, char* argv[]) {
         
         token = argv[i];
 
-        if (token == "-include_files" || token == "-F") 
+        if (token == "-include_files" || token == "-F") {
             args.includeFiles = true;
-         
-        else if ((token == "-path" || token == "-P"))
+        }
+        
+        else if ((token == "-path" || token == "-P")) {
         
             if (i + 1 < argc && argv[i + 1][0] != '-') 
                 args.path = argv[++i];
             else continue; 
+        }
         
-        else if ((token == "-target" || token == "-T")) 
+        else if ((token == "-target" || token == "-T")) {
 
             if (i + 1 < argc && argv[i + 1][0] != '-') 
                 args.target = argv[++i];
             else continue;    
+        }
 
         else if (token == "-exclude" || token == "-EX") {
           
