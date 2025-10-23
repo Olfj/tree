@@ -23,8 +23,6 @@ add_executable(${PROJECT_NAME} ${SOURCES})
 if (MINGW)
     message(STATUS "Configuring for MinGW — enabling static linking")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc -static-libstdc++")
-else()
-    message(STATUS "Not using MinGW — skipping static linking flags")
 endif()
 
 # Optionally set output directory for binary
