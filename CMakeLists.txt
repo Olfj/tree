@@ -1,11 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 project(tree_plus LANGUAGES CXX)
 
-# Use MINGW if available
 if(MINGW)
     message(STATUS "Building with mingw-w64")
-else()
-    message(STATUS "Not building with mingw-w64")
 endif()
 
 # Specify C++ standard
