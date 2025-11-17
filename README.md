@@ -91,4 +91,4 @@ Then add to path
 
 ### Linux /MacOS
 
-TODO
+The tree command in Linux/MacOS apparently already supports exclusion of files and folders from `tree`. Just google how to use that properly instead. 
