@@ -1,31 +1,23 @@
-cmake_minimum_required(VERSION 3.15)
-project(tree_plus LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.16)
+project(FileTree LANGUAGES CXX)
 
-if(MINGW)
-    message(STATUS "Building with mingw-w64")
-endif()
-
-# Specify C++ standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Include headers
-include_directories(${CMAKE_SOURCE_DIR}/include)
-
-# Collect all source files
-file(GLOB SOURCES
-    ${CMAKE_SOURCE_DIR}/src/*.cpp
+# Create a library from your .cpp functions
+add_library(filetree_lib
+    src/args.cpp
+    src/chars.cpp
+    src/filetree.cpp
 )
 
-# Create the executable
-add_executable(${PROJECT_NAME} ${SOURCES})
+# Public header directory
+target_include_directories(filetree_lib PUBLIC include)
 
-if (MINGW)
-    message(STATUS "Configuring for MinGW — enabling static linking")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc -static-libstdc++")
-endif()
+# Main executable
+add_executable(filetree src/main.cpp)
+target_link_libraries(filetree PRIVATE filetree_lib)
 
-# Optionally set output directory for binary
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
-)
+# Enable tests
+enable_testing()
+add_subdirectory(tests)
