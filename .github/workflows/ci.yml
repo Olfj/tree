@@ -2,20 +2,28 @@ name: C++ CI
 
 on:
   push:
-    branches: [ main, develop, feature-testing-ci]  
+    branches: [ main, develop, feature-testing-ci ]
   pull_request:
-    branches: [ main, develop ]  
+    branches: [ main, develop ]
 
 jobs:
   build-and-test:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]   
+        os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Cache CMake build
+        uses: actions/cache@v4
+        with:
+          path: build/_deps        # where FetchContent stores dependencies
+          key: ${{ runner.os }}-catch2-${{ hashFiles('CMakeLists.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-catch2-
 
       - name: Set up CMake
         uses: lukka/get-cmake@latest
