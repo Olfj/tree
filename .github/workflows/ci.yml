@@ -2,7 +2,7 @@ name: C++ CI
 
 on:
   push:
-    branches: [ main, develop, feature-testing-ci ]
+    branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
 
@@ -20,7 +20,7 @@ jobs:
       - name: Cache CMake build
         uses: actions/cache@v4
         with:
-          path: build/_deps        # where FetchContent stores dependencies
+          path: build/_deps
           key: ${{ runner.os }}-catch2-${{ hashFiles('CMakeLists.txt') }}
           restore-keys: |
             ${{ runner.os }}-catch2-
