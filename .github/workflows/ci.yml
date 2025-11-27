@@ -16,14 +16,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Cache CMake build
+      - name: Cache Catch2
         uses: actions/cache@v4
         with:
           path: build/_deps
-          key: ${{ runner.os }}-catch2-${{ hashFiles('CMakeLists.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-catch2-
+          key: ${{ runner.os }}-catch2-v3.5.2
 
       - name: Set up CMake
         uses: lukka/get-cmake@latest

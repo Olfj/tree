@@ -6,11 +6,13 @@ FetchContent_Declare(
   GIT_TAG v3.5.2
 )
 
-# catsc2 takes forewer to build
-set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+set(CATCH2_BUILD_TESTING OFF CACHE BOOL "" FORCE)
+set(CATCH2_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(CATCH2_BUILD_EXTRA_TESTS OFF CACHE BOOL "" FORCE)
+set(CATCH2_BUILD_HEADER_ONLY ON CACHE BOOL "" FORCE)
+
 FetchContent_MakeAvailable(catch2)
 
-# cross‑platform tests
 add_executable(test_filetree test_filetree.cpp)
 target_link_libraries(test_filetree
     PRIVATE
