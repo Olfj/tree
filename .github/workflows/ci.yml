@@ -16,6 +16,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        
       - name: Cache Catch2
         uses: actions/cache@v4
         with:
