@@ -48,4 +48,4 @@ jobs:
         run: cmake -S . -B build -DCMAKE_CXX_CLANG_TIDY=clang-tidy
 
       - name: Run lint build
-        run: cmake --build build --parallel
+        run: cmake --build build --target filetree --parallel
