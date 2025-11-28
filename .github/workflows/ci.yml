@@ -34,3 +34,18 @@ jobs:
 
       - name: Run tests
         run: ctest --test-dir build --output-on-failure
+  
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install clang-tidy
+        run: sudo apt-get update && sudo apt-get install -y clang-tidy
+
+      - name: Configure with clang-tidy
+        run: cmake -S . -B build -DCMAKE_CXX_CLANG_TIDY=clang-tidy
+
+      - name: Run lint build
+        run: cmake --build build --target filetree --parallel

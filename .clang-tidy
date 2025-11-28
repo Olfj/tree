@@ -1,0 +1,19 @@
+Checks: >
+  clang-analyzer-*,
+  bugprone-*,
+  performance-*,
+  readability-*,
+  modernize-*,
+  cppcoreguidelines-*,
+  portability-*,
+  misc-*,
+  -fuchsia-*,
+  -llvm-header-guard
+
+WarningsAsErrors: '*'
+
+HeaderFilterRegex: 'src/.*'
+
+AnalyzeTemporaryDtors: true
+
+FormatStyle: none
