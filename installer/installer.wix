@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" 
+           Name="filetree" 
+           Language="1033" 
+           Version="$(var.ProductVersion)" 
+           Manufacturer="YourCompany" 
+           UpgradeCode="d3b6f8a4-5c2b-4a7a-9f9a-123456789abc">
+
+    <!-- Per-user install -->
+    <Package InstallerVersion="500" Compressed="yes" InstallScope="perUser" />
+
+    <!-- Install into user's LocalAppData -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="LocalAppDataFolder">
+        <Directory Id="INSTALLFOLDER" Name="filetree" />
+      </Directory>
+    </Directory>
+
+    <!-- Main executable -->
+    <Component Id="MainExecutable" Guid="e1a2b3c4-d5e6-7890-abcd-123456789abc">
+      <File Id="filetreeExe" Source="$(var.YourExePath)" KeyPath="yes" />
+    </Component>
+
+    <!-- Add install folder to USER PATH -->
+    <Component Id="PathComponent" Guid="f9e8d7c6-b5a4-3210-fedc-987654321abc">
+      <Environment Id="UserPath" 
+                   Name="PATH" 
+                   Value="[INSTALLFOLDER]" 
+                   Permanent="no" 
+                   Part="last" 
+                   Action="set" 
+                   System="no" />
+    </Component>
+
+    <!-- Feature grouping -->
+    <Feature Id="DefaultFeature" Level="1">
+      <ComponentRef Id="MainExecutable" />
+      <ComponentRef Id="PathComponent" />
+    </Feature>
+  </Product>
+</Wix>
