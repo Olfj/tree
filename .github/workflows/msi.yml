@@ -1,0 +1,64 @@
+name: Build msi installer
+
+on:
+
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+  release:
+    types: [published]
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout source
+      uses: actions/checkout@v4
+
+    - name: Install CMake
+      uses: lukka/get-cmake@latest
+
+    - name: Configure project
+      run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
+
+    - name: Build project
+      run: cmake --build build --config Release
+  
+    - name: Cache WiX
+      id: wixcache
+      uses: actions/cache@v4
+      with:
+        path: C:\Program Files (x86)\WiX Toolset v3.11\
+        key: ${{ runner.os }}-wix-v3.11
+
+    - name: Install WiX toolset
+      if: steps.wixcache.outputs.cache-hit != 'true'
+      run: choco install wixtoolset --no-progress -y
+
+    - name: Determine vesion
+      shell: bash
+      run: |
+        if [ "${{github.event_name}}" = "release" ]; then
+          echo "VERSION=${{ github.event.release.tag_name }}" >> $GITHUB_ENV
+        else
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          echo "VERSION=0.1.0-${SHORT_SHA}" >> $GITHUB_ENV
+        fi
+    
+    - name: Build msi installer
+      run: |
+        candle installer/msi_installer.wxs -dYourExePath=build\\Release\\filetree.exe -dProductVersion=$VERSION -o installer.wixobj
+        light installer.wixobj -ofiletree-$VERSION.msi
+    
+    - name: Upload msi artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: filetree-installer
+        path: filetree-*.msi
+    
+    - name: Upload msi to Release
+      if: ${{ github.event_name == 'release' }}
+      uses: softprops/action-gh-release@v2
+      with:
+        files: filetree-*.msi
