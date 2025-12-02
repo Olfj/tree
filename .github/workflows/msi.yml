@@ -36,7 +36,7 @@ jobs:
       if: steps.wixcache.outputs.cache-hit != 'true'
       run: choco install wixtoolset --no-progress -y
 
-    - name: Determine vesion
+    - name: Determine version
       shell: bash
       run: |
         if [ "${{github.event_name}}" = "release" ]; then
@@ -45,6 +45,10 @@ jobs:
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           echo "VERSION=0.1.0-${SHORT_SHA}" >> $GITHUB_ENV
         fi
+
+    - name: Show build output
+      run: ls -R build
+      shell: bash
     
     - name: Build msi installer
       run: |
