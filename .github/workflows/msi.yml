@@ -46,7 +46,7 @@ jobs:
     
     - name: Build msi installer
       run: |
-        candle installer.wxs -dYourExePath=build\\Release\\filetree.exe -dProductVersion=$VERSION -o installer.wixobj
+        candle installer/msi_installer.wxs -dYourExePath=build\\Release\\filetree.exe -dProductVersion=$VERSION -o installer.wixobj
         light installer.wixobj -ofiletree-$VERSION.msi
     
     - name: Upload msi artifact
