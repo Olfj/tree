@@ -3,9 +3,9 @@ name: Build msi installer
 on:
 
   workflow_dispatch:
-  workflow_run:
-    workflows: ["CI"]
-    types: [completed]
+  # workflow_run:
+  #   workflows: ["CI"]
+  #   types: [completed]
   release:
     types: [published]
 jobs:
@@ -52,7 +52,7 @@ jobs:
     
     - name: Build msi installer
       run: |
-        candle installer/msi_installer.wxs -dYourExePath=build/Release/filetree.exe -dProductVersion=$VERSION -o installer.wixobj
+        candle installer\msi_installer.wxs -dYourExePath=build\Release\filetree.exe -dProductVersion=$VERSION -o installer.wixobj
         light installer.wixobj -ofiletree-$VERSION.msi
     
     - name: Upload msi artifact
