@@ -4,3 +4,12 @@
 
 using namespace std;
 namespace fs = filesystem;
+
+TEST_CASE("Testing tree chars") {
+    TreeChars chars = initTreeChars();
+    REQUIRE(chars.branchLast == "└── ");
+    REQUIRE(chars.branchMid == "├── ");
+    REQUIRE(chars.indentLast == "    ");
+    REQUIRE(chars.indentMid == "│   ");
+}
+
