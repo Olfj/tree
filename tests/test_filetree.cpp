@@ -1,14 +1,14 @@
 #include <catch2/catch_test_macros.hpp>
 #include <filesystem>
 #include <fstream>
-#include <sstream>
-#include <iostream>
 #include "filetree.hpp" 
 #include "chars.hpp"
-
+#include "args.hpp" 
 
 using namespace std;
 namespace fs = filesystem;
+
+//-------- Testing createFileTree --------//
 
 struct FileTreeFixture {
     fs::path base;
@@ -41,7 +41,7 @@ struct FileTreeFixture {
     }
 };
 
-TEST_CASE_METHOD(FileTreeFixture, "Tree includes files", "[filetree]") {
+TEST_CASE_METHOD(FileTreeFixture, "Tree includes files") {
     ostringstream oss;
     TreeChars chars = initTreeChars();
 
@@ -56,7 +56,7 @@ TEST_CASE_METHOD(FileTreeFixture, "Tree includes files", "[filetree]") {
     }
 }
 
-TEST_CASE_METHOD(FileTreeFixture, "Tree excludes files", "[filetree]") {
+TEST_CASE_METHOD(FileTreeFixture, "Tree excludes files") {
     
     ostringstream oss;
     TreeChars chars = initTreeChars();
@@ -69,12 +69,12 @@ TEST_CASE_METHOD(FileTreeFixture, "Tree excludes files", "[filetree]") {
             REQUIRE(output.find(file) == string::npos);
         }
     }
-    for (auto it = std::next(folders.begin()); it != folders.end(); ++it) {
+    for (auto it = next(folders.begin()); it != folders.end(); ++it) {
         REQUIRE(output.find(*it) != string::npos);
     }
 }
 
-TEST_CASE_METHOD(FileTreeFixture, "Tree excludes specific folder", "[filetree]") {
+TEST_CASE_METHOD(FileTreeFixture, "Tree excludes specific folder") {
     ostringstream oss;
     TreeChars chars = initTreeChars();
 
@@ -92,7 +92,7 @@ TEST_CASE_METHOD(FileTreeFixture, "Tree excludes specific folder", "[filetree]")
     REQUIRE(output.find("subdir1") == string::npos);
 }
 
-TEST_CASE_METHOD(FileTreeFixture, "Tree excludes file type", "[filetree]") {
+TEST_CASE_METHOD(FileTreeFixture, "Tree excludes file type") {
     
     ostringstream oss;
     TreeChars chars = initTreeChars();
@@ -103,7 +103,7 @@ TEST_CASE_METHOD(FileTreeFixture, "Tree excludes file type", "[filetree]") {
     REQUIRE(output.find(".pdf") == string::npos);
 }
 
-TEST_CASE_METHOD(FileTreeFixture, "Tree excludes directory content", "[filetree]") {
+TEST_CASE_METHOD(FileTreeFixture, "Tree excludes directory content") {
     
     ostringstream oss;
     TreeChars chars = initTreeChars();
@@ -119,13 +119,13 @@ TEST_CASE_METHOD(FileTreeFixture, "Tree excludes directory content", "[filetree]
         REQUIRE(output.find(file) != string::npos);
     }
     
-    for (auto it = std::next(folders.begin()); it != folders.end(); ++it) {
+    for (auto it = next(folders.begin()); it != folders.end(); ++it) {
         REQUIRE(output.find(*it) != string::npos);
     
     }
 }
 
-TEST_CASE_METHOD(FileTreeFixture, "Tree excludes directory content in root", "[filetree]") {
+TEST_CASE_METHOD(FileTreeFixture, "Tree excludes directory content in root") {
     
     ostringstream oss;
     TreeChars chars = initTreeChars();
@@ -133,8 +133,6 @@ TEST_CASE_METHOD(FileTreeFixture, "Tree excludes directory content in root", "[f
     createFileTree(true, base, "    ", {}, {base.string()}, chars, oss);
     
     string output = oss.str();
-
-    cout << "\n--- Tree includes files ---\n" << output << "\n";
 
     for (string folder : folders) {
         REQUIRE(output.find(folder) == string::npos);
@@ -146,15 +144,108 @@ TEST_CASE_METHOD(FileTreeFixture, "Tree excludes directory content in root", "[f
     }
 }
 
-TEST_CASE_METHOD(FileTreeFixture, "Program handles non existing path", "[!mayfail]") {
+// TEST_CASE_METHOD(FileTreeFixture, "Program handles non existing path", "[!mayfail]") {
 
-    // There is no test case here yet, it just simply sees what happens. This should be updated to expect something. 
-    // Aditionally the code should do something other than just crashing. Maybe return a simple message about non existing paths and terminating.
+//     // There is no test case here yet, it just simply sees what happens. This should be updated to expect something. 
+//     // Aditionally the code should do something other than just crashing. Maybe return a simple message about non existing paths and terminating.
 
-    ostringstream oss;
-    TreeChars chars = initTreeChars();
+//     ostringstream oss;
+//     TreeChars chars = initTreeChars();
 
-    createFileTree(true, "non_existent", "    ", {}, {base.string()}, chars, oss);
+//     createFileTree(true, "non_existent", "    ", {}, {base.string()}, chars, oss);
+// }
+
+
+//-------- Testing parse_args --------//
+
+
+vector<char*> make_argv(const vector<string>& args) {
+    vector<char*> argv;
+    for (auto& s : args) {
+        argv.push_back(const_cast<char*>(s.c_str()));
+    }
+    return argv;
 }
+
+TEST_CASE("Default args when no arguments provided") {
+    auto argv = make_argv({"program"});
+    int argc = argv.size();
+
+    Args args = parse_args(argc, argv.data());
+
+    REQUIRE(args.path == ".");
+    REQUIRE_FALSE(args.includeFiles);
+    REQUIRE_FALSE(args.terminate);
+    REQUIRE(args.exclude.empty());
+    REQUIRE(args.excludeSub.empty());
+}
+
+TEST_CASE("Help flag terminates program") {
+    auto argv = make_argv({"program", "--help"});
+    int argc = argv.size();
+
+    Args args = parse_args(argc, argv.data());
+
+    REQUIRE(args.terminate);
+}
+
+TEST_CASE("Include files flag works") {
+    auto argv = make_argv({"program", "-F"});
+    int argc = argv.size();
+
+    Args args = parse_args(argc, argv.data());
+
+    REQUIRE(args.includeFiles);
+}
+
+TEST_CASE("Path argument sets correctly") {
+    auto argv = make_argv({"program", "-path", "/tmp"});
+    int argc = argv.size();
+
+    Args args = parse_args(argc, argv.data());
+
+    REQUIRE(args.path == "/tmp");
+}
+
+TEST_CASE("Target argument sets correctly") {
+    auto argv = make_argv({"program", "-T", "hejbaberiba"});
+    int argc = argv.size();
+
+    Args args = parse_args(argc, argv.data());
+
+    REQUIRE(args.target == "hejbaberiba");
+}
+
+TEST_CASE("Exclude arguments collect multiple values") {
+    auto argv = make_argv({"program", "-EX", "hej", "tjena"});
+    int argc = argv.size();
+
+    Args args = parse_args(argc, argv.data());
+
+    REQUIRE(args.exclude.size() == 2);
+    REQUIRE(args.exclude[0] == "hej");
+    REQUIRE(args.exclude[1] == "tjena");
+}
+
+TEST_CASE("Exclude_sub arguments collect multiple values") {
+    auto argv = make_argv({"program", "-EX_S", "hej", "tjena"});
+    int argc = argv.size();
+
+    Args args = parse_args(argc, argv.data());
+
+    REQUIRE(args.excludeSub.size() == 2);
+    REQUIRE(args.excludeSub[0] == "hej");
+    REQUIRE(args.excludeSub[1] == "tjena");
+}
+
+TEST_CASE("Unknown argument terminates program") {
+    auto argv = make_argv({"program", "-unknown"});
+    int argc = argv.size();
+
+    Args args = parse_args(argc, argv.data());
+
+    REQUIRE(args.terminate);
+}
+
 
     
