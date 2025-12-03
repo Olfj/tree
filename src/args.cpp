@@ -53,7 +53,7 @@ namespace {
 }
 
 
-Args parse_args(int argc, char* argv[]) {
+Args parse_args(int argc, const char* const argv[]) {
 
     Args args;
     args.path = ".";

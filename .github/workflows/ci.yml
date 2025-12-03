@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build-and-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Cache Catch2
+        uses: actions/cache@v4
+        with:
+          path: build/_deps
+          key: ${{ runner.os }}-catch2-v3.5.2
+
+      - name: Set up CMake
+        uses: lukka/get-cmake@latest
+
+      - name: Configure project
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build project
+        run: cmake --build build --parallel
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
+  
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install clang-tidy
+        run: sudo apt-get update && sudo apt-get install -y clang-tidy
+
+      - name: Configure with clang-tidy
+        run: cmake -S . -B build -DCMAKE_CXX_CLANG_TIDY=clang-tidy
+
+      - name: Run lint build
+        run: cmake --build build --target filetree --parallel
