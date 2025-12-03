@@ -159,19 +159,11 @@ TEST_CASE_METHOD(FileTreeFixture, "Tree excludes directory content in root") {
 //-------- Testing parse_args --------//
 
 
-vector<char*> make_argv(const vector<string>& args) {
-    vector<char*> argv;
-    for (auto& s : args) {
-        argv.push_back(const_cast<char*>(s.c_str()));
-    }
-    return argv;
-}
-
 TEST_CASE("Default args when no arguments provided") {
-    auto argv = make_argv({"program"});
-    int argc = argv.size();
+    const char* argv[] = { "program" };
+    int argc = 1;
 
-    Args args = parse_args(argc, argv.data());
+    Args args = parse_args(argc, argv);
 
     REQUIRE(args.path == ".");
     REQUIRE_FALSE(args.includeFiles);
@@ -181,46 +173,46 @@ TEST_CASE("Default args when no arguments provided") {
 }
 
 TEST_CASE("Help flag terminates program") {
-    auto argv = make_argv({"program", "--help"});
-    int argc = argv.size();
+    const char* argv[] = { "program", "--help" };
+    int argc = 2;
 
-    Args args = parse_args(argc, argv.data());
+    Args args = parse_args(argc, argv);
 
     REQUIRE(args.terminate);
 }
 
 TEST_CASE("Include files flag works") {
-    auto argv = make_argv({"program", "-F"});
-    int argc = argv.size();
+    const char* argv[] = { "program", "-F" };
+    int argc = 2;
 
-    Args args = parse_args(argc, argv.data());
+    Args args = parse_args(argc, argv);
 
     REQUIRE(args.includeFiles);
 }
 
 TEST_CASE("Path argument sets correctly") {
-    auto argv = make_argv({"program", "-path", "/tmp"});
-    int argc = argv.size();
+    const char* argv[] = { "program", "-path", "/tmp" };
+    int argc = 3;
 
-    Args args = parse_args(argc, argv.data());
+    Args args = parse_args(argc, argv);
 
     REQUIRE(args.path == "/tmp");
 }
 
 TEST_CASE("Target argument sets correctly") {
-    auto argv = make_argv({"program", "-T", "hejbaberiba"});
-    int argc = argv.size();
+    const char* argv[] = { "program", "-T", "hejbaberiba" };
+    int argc = 3;
 
-    Args args = parse_args(argc, argv.data());
+    Args args = parse_args(argc, argv);
 
     REQUIRE(args.target == "hejbaberiba");
 }
 
 TEST_CASE("Exclude arguments collect multiple values") {
-    auto argv = make_argv({"program", "-EX", "hej", "tjena"});
-    int argc = argv.size();
+    const char* argv[] = { "program", "-EX", "hej", "tjena" };
+    int argc = 4;
 
-    Args args = parse_args(argc, argv.data());
+    Args args = parse_args(argc, argv);
 
     REQUIRE(args.exclude.size() == 2);
     REQUIRE(args.exclude[0] == "hej");
@@ -228,10 +220,10 @@ TEST_CASE("Exclude arguments collect multiple values") {
 }
 
 TEST_CASE("Exclude_sub arguments collect multiple values") {
-    auto argv = make_argv({"program", "-EX_S", "hej", "tjena"});
-    int argc = argv.size();
+    const char* argv[] = { "program", "-EX_S", "hej", "tjena" };
+    int argc = 4;
 
-    Args args = parse_args(argc, argv.data());
+    Args args = parse_args(argc, argv);
 
     REQUIRE(args.excludeSub.size() == 2);
     REQUIRE(args.excludeSub[0] == "hej");
@@ -239,13 +231,14 @@ TEST_CASE("Exclude_sub arguments collect multiple values") {
 }
 
 TEST_CASE("Unknown argument terminates program") {
-    auto argv = make_argv({"program", "-unknown"});
-    int argc = argv.size();
+    const char* argv[] = { "program", "-unknown" };
+    int argc = 2;
 
-    Args args = parse_args(argc, argv.data());
+    Args args = parse_args(argc, argv);
 
     REQUIRE(args.terminate);
 }
+
 
 
     
