@@ -1,6 +1,7 @@
 # tree_plus
 
-A replica of the built in `tree` command with some extra options. Default behaviour is to give the entire tree starting from the working directory, excluding files (i.e. the same behaviour as `tree`).
+A replica of the built in `tree` command with some extra options. Default behaviour is to give the entire tree, including hidden folders and excluding files, starting from the working directory. The program has no special handling of symlinks, junctions, restricted folders, etc. so running this on your entire C: drive will most likely fail. The intended use is to quickly get an overview of a small file tree. 
+
 
 ### Usage:
 
@@ -29,16 +30,64 @@ A replica of the built in `tree` command with some extra options. Default behavi
 
 ### Examples:
 
-```    
-C:\...\tree_plus> tree_plus -EX .git build
+No arguments 
+```
+PS C:\...\tree> tree_plus
     .
+    ├── .git
+    │   ├── hooks
+    │   ├── info
+    │   ├── logs
+    │   │   └── refs
+    │   │       ├── heads
+    │   │       │   ├── 7-feature
+    │   │       │   └── feature
+    │   │       └── remotes
+    │   │           └── origin
+    │   │               ├── 11-feature
+    │   │               ├── 7-feature
+    │   │               └── feature
+    │   ├── objects
+    .
+    .
+    .
+
+    │           │   └── tmp
+    │           └── CMakeFiles
+    │               ├── 4.1.1
+    │               ├── catch2-populate.dir
+    │               └── pkgRedirects
     ├── include
-    └── src
+    ├── src
+    └── tests
 ```
 
-```
-C:\...\tree_plus> tree_plus -F -EX .git build
+Excluding .git, .vscode and build to make it clearer.
+
+```    
+PS C:\...\tree> tree_plus -EX .git .vscode build
     .
+    ├── .github
+    │   ├── ISSUE_TEMPLATE
+    │   └── workflows
+    ├── include
+    ├── src
+    └── tests
+```
+
+Including files in the tree.
+
+```
+PS C:\...\tree> tree_plus -F -EX .git .vscode build
+    .
+    ├── .clang-tidy
+    ├── .github
+    │   ├── ISSUE_TEMPLATE
+    │   │   ├── bug_report.md
+    │   │   └── feature_request.md
+    │   ├── PULL_REQUEST_TEMPLATE.md
+    │   └── workflows
+    │       └── ci.yml
     ├── .gitignore
     ├── CMakeLists.txt
     ├── include
@@ -46,21 +95,31 @@ C:\...\tree_plus> tree_plus -F -EX .git build
     │   ├── chars.hpp
     │   └── filetree.hpp
     ├── README.md
-    └── src
-        ├── args.cpp
-        ├── chars.cpp
-        ├── filetree.cpp
-        └── main.cpp
+    ├── src
+    │   ├── args.cpp
+    │   ├── chars.cpp
+    │   ├── filetree.cpp
+    │   └── main.cpp
+    └── tests
+        ├── CMakeLists.txt
+        ├── test_filetree.cpp
+        ├── test_platform_linux.cpp
+        └── test_platform_windows.cpp
 ```
 
+Excluding the contents of tests, src and include.
+
 ```
-C:\...\tree_plus> tree_plus -F -EX .git build -EX_S src include
+PS C:\...\tree> tree_plus -F -EX .git .vscode build -EX_S src tests .github include
     .
+    ├── .clang-tidy
+    ├── .github
     ├── .gitignore
     ├── CMakeLists.txt
     ├── include
     ├── README.md
-    └── src
+    ├── src
+    └── tests
 ```
 
 ### Windows:
